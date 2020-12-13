@@ -1,8 +1,8 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, request, redirect
 from flask_mongoengine import MongoEngine
 from datetime import datetime
-
 import mongoengine as me
+
 app = Flask(__name__)
 
 app.config['MONGODB_SETTINGS'] = {                              #connection to databse
@@ -18,6 +18,7 @@ db.init_app(app)                                                #creates the obj
 class Task(me.Document):                                        #creating database model
     content = me.StringField(max_length=200, required=True)
     created_on = me.DateTimeField(default=datetime.utcnow())
+    status = me.BooleanField(default=False)
 
 
 @app.route('/', methods=['POST', 'GET'])                       #default routing function
@@ -61,6 +62,25 @@ def update(id):
         return render_template('update.html', task=task)        #if method is GET then redirect requet to update page to get the new content
 
 
+@app.route('/done/<id>')                                        #updating status of task by id
+def done(id):
+    task = Task.objects.get(id = id)                            #getting task from database using id
+    task.status = True                                          #updating status of task to Done
+    try:
+        task.save()                                             #save updated object in database
+        return redirect('/')
+    except:
+        return 'There was an issue updating your task'
+
+@app.route('/undone/<id>')                                      #updating status of stored task by id
+def undone(id):
+    task = Task.objects.get(id = id)                            #getting task from database using id
+    task.status = False                                         #updating status of task to undone
+    try:
+        task.save()                                             #save updated object in database
+        return redirect('/')
+    except:
+        return 'There was an issue updating your task'
 
 if __name__=='__main__':
     app.run(debug = True)

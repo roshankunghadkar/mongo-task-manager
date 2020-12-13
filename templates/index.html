@@ -14,13 +14,26 @@
     <table>
         <tr>
             <th>Task</th>
-            <th>Added</th>
+            <th>Added on</th>
+            <th>Status</th>
             <th>Actions</th>
+
         </tr>
         {% for task in tasks %}
             <tr>
+                {%if task.status == True%}
+                <td><del>{{ task.content }}</del></td>
+                {% else %}
                 <td>{{ task.content }}</td>
+                {% endif %}
                 <td>{{ task.created_on.date() }}</td>
+                <td>
+                    {% if task.status == false %}
+                    <a href="/done/{{task.id}}">Done</a>
+                    {% else %}
+                    <a href="/undone/{{task.id}}">Undone</a>
+                    {% endif %}
+                </td>
                 <td>
                     <a href="/delete/{{task.id}}">Delete</a>
                     <br>
