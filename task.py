@@ -72,8 +72,8 @@ def done(id):
     except:
         return 'There was an issue updating your task'
 
-@app.route('/undone/<id>')                                      #updating status of stored task by id
-def undone(id):
+@app.route('/undo/<id>')                                      #updating status of stored task by id
+def undo(id):
     task = Task.objects.get(id = id)                            #getting task from database using id
     task.status = False                                         #updating status of task to undone
     try:
